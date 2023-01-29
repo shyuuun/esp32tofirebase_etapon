@@ -54,7 +54,7 @@ MIDDLEWARE = [
 
 #
 ROOT_URLCONF = 'CloudBin_IOT.urls'
-#SECURE_SSL_REDIRECT = False
+SECURE_SSL_REDIRECT = False
 
 TEMPLATES = [
     {
