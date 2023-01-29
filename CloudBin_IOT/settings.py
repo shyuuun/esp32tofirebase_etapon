@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-APPEND_SLASH = False
+
 ROOT_URLCONF = 'CloudBin_IOT.urls'
 SECURE_SSL_REDIRECT = False
 
