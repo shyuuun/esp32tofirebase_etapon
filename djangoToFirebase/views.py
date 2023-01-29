@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from djangoToFirebase.models import SmartBin
+from django.views.decorators.csrf import csrf_exempt
 
 from django.views.generic import View
 from .process import html_to_pdf
@@ -50,7 +51,7 @@ def test(request):
 
 
 
-
+@csrf_exempt
 def updateToFirebase(request):
     if request.method == 'POST':
 
