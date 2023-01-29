@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'etaponcloud'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_124686364EFB46DF9C2CD58D51EF5AF8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_985A415C94784F48909F190A308437F3 }}
