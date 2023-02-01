@@ -83,7 +83,7 @@ def pdfCreate(request):
 def updateToFirebase(request):
     if request.method == 'POST':
 
-        current_date = timeInPH.strftime("%H-%M-%S")
+        current_date = timeInPH.strftime("%d-%m-%y")
         print("Current Date:", current_date)
 
         current_time = timeInPH.strftime("%H:%M")
