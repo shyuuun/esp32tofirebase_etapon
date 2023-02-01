@@ -3,11 +3,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from djangoToFirebase.models import SmartBin
 from django.views.decorators.csrf import csrf_exempt
-
 from django.views.generic import View
 from .process import html_to_pdf
 import pyrebase, json, pytz
-import datetime
+from xhtml2pdf import pisa
+from datetime import datetime
 
 config={
   "apiKey": "AIzaSyB_1yoKFusZpfCpXIaDRNfWQ1rAhEoqzE4",
@@ -27,8 +27,12 @@ BIN2 = "Cloudbin_ITECH2"
 BIN3 = "Cloudbin_ITECH3"
 
 currentTimeZone = pytz.timezone('Asia/Hong_Kong')
+timeInPH = datetime.now(currentTimeZone)
+currentDatePH = timeInPH.strftime('%d-%m-%y')
+currentTimePH = timeInPH.strftime("%H:%M:%S")
 
 print("time from pytz:", currentTimeZone)
+print("time in the ph", currentTimePH)
 
 class ViewPdf(View):
     def get(self, request, *args, **kwargs):
@@ -49,17 +53,40 @@ def test(request):
     }
     return HttpResponse(template.render(context, request))
 
+def listview(request):
+    data = SmartBin.objects.all();
+    return HttpResponse(render(request, 'generate.html', {'data': data}))
+
+def pdfCreate(request):
+    data = SmartBin.objects.all();
+
+    template_path = 'generate.html'
+
+    context = {'data': data}
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content'] = 'filename="Etapon_Logs.pdf"'
+
+    template = loader.get_template(template_path)
+
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse('Error')
+    return response
+
 
 
 @csrf_exempt
 def updateToFirebase(request):
     if request.method == 'POST':
 
-        current_date = str(datetime.date.today())
+        current_date = timeInPH.strftime("%H-%M-%S")
         print("Current Date:", current_date)
 
-        now = datetime.datetime.now()
-        current_time = now.strftime("%H:%M")
+        current_time = timeInPH.strftime("%H:%M")
         print("Current Time:", current_time)
         # json file will be converted into dictionary
         data = json.loads(request.body)
