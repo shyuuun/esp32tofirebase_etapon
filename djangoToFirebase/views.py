@@ -7,7 +7,7 @@ from django.views.generic import View
 from .process import html_to_pdf
 import pyrebase, json, pytz
 from xhtml2pdf import pisa
-from datetime import datetime
+from django.utils import timezone
 
 config={
   "apiKey": "AIzaSyB_1yoKFusZpfCpXIaDRNfWQ1rAhEoqzE4",
@@ -26,13 +26,9 @@ BIN1 = "Cloudbin_ITECH1"
 BIN2 = "Cloudbin_ITECH2"
 BIN3 = "Cloudbin_ITECH3"
 
-currentTimeZone = pytz.timezone('Asia/Hong_Kong')
-timeInPH = datetime.now(currentTimeZone)
-currentDatePH = timeInPH.strftime('%d-%m-%y')
-currentTimePH = timeInPH.strftime("%H:%M:%S")
 
-print("time from pytz:", currentTimeZone)
-print("time in the ph", currentTimePH)
+
+
 
 class ViewPdf(View):
     def get(self, request, *args, **kwargs):
@@ -83,22 +79,22 @@ def pdfCreate(request):
 def updateToFirebase(request):
     if request.method == 'POST':
 
-        current_date = timeInPH.strftime("%d-%m-%y")
-        print("Current Date:", current_date)
-
-        current_time = timeInPH.strftime("%H:%M")
-        print("Current Time:", current_time)
         # json file will be converted into dictionary
         data = json.loads(request.body)
         print(data) # debug
 
         binName = data.get("binName")
+        time = timezone.localtime().now().strftime('%I:%M%p')
+        date = timezone.localtime().now().strftime('%B %d, %Y')
+
+        print(time)
+        print(date)
+
 
         if BIN1 == binName:
             battery1 = data.get("battery1")
             bin1Level = data.get("bin1")
             bin2Level = data.get("bin2")
-
             print("From:", binName)
             print("Battery1:", battery1)
             print("bin1Level:", bin1Level)
@@ -106,14 +102,14 @@ def updateToFirebase(request):
 
             database.child('ITECH').update({'battery1': battery1})
 
-            smartBinobj = SmartBin(binName=BIN1, binDate=current_date, binTime=current_time, battery=battery1, binLevel1=bin1Level, binLevel2=bin2Level)
+            smartBinobj = SmartBin(binName=BIN1,  battery=battery1, binLevel1=bin1Level, binLevel2=bin2Level)
 
             database.child('ITECH').update({'bin1': bin1Level})
-            database.child('ITECH').update({'bin1Date': current_date})
-            database.child('ITECH').update({'bin1Time': current_time})
+            database.child('ITECH').update({'bin1Date': date})
+            database.child('ITECH').update({'bin1Time': time})
             database.child('ITECH').update({'bin2': bin2Level})
-            database.child('ITECH').update({'bin2Date': current_date})
-            database.child('ITECH').update({'bin2Time': current_time})
+            database.child('ITECH').update({'bin2Date': date})
+            database.child('ITECH').update({'bin2Time': time})
 
             smartBinobj.save()
             print("Database Updated")
@@ -123,7 +119,7 @@ def updateToFirebase(request):
             bin3Level = data.get("bin3")
             bin4Level = data.get("bin4")
 
-            smartBinobj = SmartBin(binName=BIN2, binDate=current_date, binTime=current_time, battery=battery2, binLevel1=bin3Level, binLevel2=bin4Level)
+            smartBinobj = SmartBin(binName=BIN2, battery=battery2, binLevel1=bin3Level, binLevel2=bin4Level)
 
             print("From:", binName)
             print("Battery2:", battery2)
@@ -134,11 +130,11 @@ def updateToFirebase(request):
             database.child('ITECH').update({'battery2': battery2})
 
             database.child('ITECH').update({'bin3': bin3Level})
-            database.child('ITECH').update({'bin3Date': current_date})
-            database.child('ITECH').update({'bin3Time': current_time})
+            database.child('ITECH').update({'bin3Date': date})
+            database.child('ITECH').update({'bin3Time': time})
             database.child('ITECH').update({'bin4': bin4Level})
-            database.child('ITECH').update({'bin4Date': current_date})
-            database.child('ITECH').update({'bin4Time': current_time})
+            database.child('ITECH').update({'bin4Date': date})
+            database.child('ITECH').update({'bin4Time': time})
 
             smartBinobj.save()
             print("Database Updated")
@@ -157,14 +153,14 @@ def updateToFirebase(request):
 
             database.child('ITECH').update({'battery3': battery3})
 
-            smartBinobj = SmartBin(binName=BIN3, binDate=current_date, binTime=current_time, battery=battery3, binLevel1=bin5Level, binLevel2=bin6Level)
+            smartBinobj = SmartBin(binName=BIN3, battery=battery3, binLevel1=bin5Level, binLevel2=bin6Level)
 
             database.child('ITECH').update({'bin5': bin5Level})
-            database.child('ITECH').update({'bin5Date': current_date})
-            database.child('ITECH').update({'bin5Time': current_time})
+            database.child('ITECH').update({'bin5Date': date})
+            database.child('ITECH').update({'bin5Time': time})
             database.child('ITECH').update({'bin6': bin6Level})
-            database.child('ITECH').update({'bin6Date': current_date})
-            database.child('ITECH').update({'bin6Time': current_time})
+            database.child('ITECH').update({'bin6Date': date})
+            database.child('ITECH').update({'bin6Time': time})
     
             smartBinobj.save()
             print("Database Updated")
